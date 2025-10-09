@@ -12,9 +12,19 @@ import Math.Vector2;
 public class Player extends GameObject {
 
     private Handler handler;
-    public Player(ID id, Handler handler) {
+
+    // Define player dimensions
+    private static final int PLAYER_WIDTH = 32;
+    private static final int PLAYER_HEIGHT = 64;
+
+    public Player(ID id, Handler handler, int startX, int startY) {
         super(id);
         this.handler = handler;
+
+        // --- Setting Dimensions and Initial Position ---
+        this.width = PLAYER_WIDTH;
+        this.height = PLAYER_HEIGHT;
+        GameObject.spawn(this, new Vector2(startX, startY), Vector2.zero(), Vector2.one());
     }
 
     @Override
@@ -24,41 +34,59 @@ public class Player extends GameObject {
         position.x += velX;
         position.y += velY;
 
-        transform.setPosition(position);
-
         // 2. Apply Gravity
         if (falling) {
-            velY += gravity;  // Remove the (int) cast here!
+            velY += gravity;
             // Limit falling speed
             if (velY > MAX_VEL_Y) {
-                velY = (int) MAX_VEL_Y;
+                velY = MAX_VEL_Y; // Use MAX_VEL_Y (float) directly
             }
         }
 
         // Check if player hits ground
-        if (y >= Game.HEIGHT - 50 - height) {
-            y = Game.HEIGHT - 50 - height;
+        // Ground is drawn at Game.HEIGHT - 50. Collision happens when
+        // the player's bottom edge (position.y + height) hits the ground's top edge (Game.HEIGHT - 50).
+        // The current check is: position.y >= Game.HEIGHT - 50 - height
+        float groundY = Game.HEIGHT - 50;
+
+        if (position.y + height >= groundY) {
+            // Snap player position exactly to the ground line
+            position.y = groundY - height;
             velY = 0;
             falling = false;
             jumping = false;
         } else {
+            // The character is in the air
             falling = true;
         }
 
-        // Boundary checks
-        if (x < 0) x = 0;
-        if (x + width > Game.WIDTH) x = Game.WIDTH - width;
+        // Boundary checks (Horizontal)
+        if (position.x < 0) position.x = 0;
+        if (position.x + width > Game.WIDTH) position.x = Game.WIDTH - width;
+
+        transform.setPosition(position);
+    }
+
+    void collisionCheck(){
+
     }
 
     @Override
     public void render(Graphics g) {
         // Placeholder rendering: a blue square
         g.setColor(Color.BLUE);
-        g.fillRect(x, y, width, height);
+        // Use the defined width and height properties
+        g.fillRect((int)transform.getPosition().x, (int)transform.getPosition().y, width, height);
     }
 
     @Override
     public Rectangle getBounds() {
-        return new Rectangle(x, y, width, height);
+        // Use the defined width and height properties
+        return new Rectangle((int)transform.getPosition().x, (int)transform.getPosition().y, width, height);
     }
+}
+
+class Collider{
+
+
 }

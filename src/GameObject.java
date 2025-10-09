@@ -12,7 +12,6 @@ import Math.Vector2;
 public abstract class GameObject {
 
     protected Transform transform;
-    protected int x, y;
     protected int width, height;
     protected ID id;
 
@@ -32,28 +31,25 @@ public abstract class GameObject {
         gameObject.transform.setPosition(position);
         gameObject.transform.setRotation(rotation);
         gameObject.transform.setScale(scale);
-
     }
-
-
 
     /**
      * Updates the object's state (position, AI, animation frame).
      */
     public abstract void tick();
 
-    public void render(Graphics g){
-        g.setColor(Color.BLUE);
-        g.fillRect((int)transform.getPosition().x, (int)transform.getPosition().y, width, height);
-    }
+    // The render method is now abstract in the base class (assuming you removed the default implementation)
+    public abstract void render(Graphics g);
 
     public abstract Rectangle getBounds();
 
-    public int getX() { return x; }
-    public void setX(int x) { this.x = x; }
+    // Keeping x and y here is redundant with Transform, but keeping the setters/getters
+    // consistent with the old structure if other classes rely on them.
+    public int getX() { return (int)transform.getPosition().x; }
+    public void setX(int x) { transform.getPosition().x = x; }
 
-    public int getY() { return y; }
-    public void setY(int y) { this.y = y; }
+    public int getY() { return (int)transform.getPosition().y; }
+    public void setY(int y) { transform.getPosition().y = y; }
 
     public int getWidth() { return width; }
     public void setWidth(int width) { this.width = width; }
