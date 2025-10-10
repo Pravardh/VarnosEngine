@@ -17,12 +17,6 @@ public class Player extends GameObject {
 
     }
 
-    @Override
-    public void tick() {
-        super.tick();
-
-        System.out.println("Player ticked");
-    }
 
     @Override
     public void end(){

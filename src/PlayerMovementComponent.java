@@ -33,6 +33,8 @@ public class PlayerMovementComponent implements GameObjectComponent {
 
     @Override
     public void tick() {
+        System.out.println("MovementComponent tick");
+
         int pressedKey = InputReader.getLastKeyPressed();
         int releasedKey = InputReader.getLastKeyReleased();
 

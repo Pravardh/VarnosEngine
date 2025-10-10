@@ -1,10 +1,8 @@
 import java.awt.Graphics;
 import java.awt.Color;
-import java.awt.Rectangle;
 import java.util.LinkedList;
 
-import Math.Transform;
-import Math.Vector2;
+import Math.*;
 
 public abstract class GameObject {
 
@@ -28,12 +26,13 @@ public abstract class GameObject {
         gameObject.transform.setScale(scale);
 
         gameObject.start();
-        Handler.objects.add(gameObject);
+        Handler.addObject(gameObject);
     }
 
     public static void destroy(GameObject gameObject){
         gameObject.end();
-        Handler.objects.remove(gameObject);
+
+        Handler.safeDestroy(gameObject);
 
     }
 
@@ -56,14 +55,12 @@ public abstract class GameObject {
     }
 
     public void tick(){
-
         for (GameObjectComponent component : components) {
             component.tick();
-
         }
     }
     public void end(){
-
+        components.clear();
     }
 
     public void render(Graphics g) {
