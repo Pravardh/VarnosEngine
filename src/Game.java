@@ -2,7 +2,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
-import javax.swing.JFrame;
+import Math.*;
 
 /**
  * Game.java
@@ -27,14 +27,13 @@ public class Game extends Canvas implements Runnable {
         handler = new Handler();
 
         // Add input listeners
-        this.addKeyListener(new KeyInput(handler));
+        this.addKeyListener(new InputReader(handler));
 
         // Create the window (Frame)
         new Window(WIDTH, HEIGHT, TITLE, this);
 
         // --- Instantiate initial game objects ---
         // Player (x, y, w, h, ID, handler)
-        handler.addObject(new Player(ID.Player, handler, 0, 0));
 
         // Enemy (x, y, w, h, ID, handler)
 
@@ -49,6 +48,8 @@ public class Game extends Canvas implements Runnable {
         thread = new Thread(this);
         thread.start();
         running = true;
+
+        GameObject.spawn(new Player(ID.Player, 32, 64), new Vector2(50, 50), Vector2.zero(), new Vector2(32, 64));
     }
 
     public synchronized void stop() {
@@ -103,18 +104,12 @@ public class Game extends Canvas implements Runnable {
         stop();
     }
 
-    // --- Core Engine Methods ---
 
-    /**
-     * Logic update (e.g., movement, AI, collision checks).
-     */
     private void tick() {
         handler.tick();
     }
 
-    /**
-     * Graphics rendering.
-     */
+
     private void render() {
         BufferStrategy bs = this.getBufferStrategy();
         if (bs == null) {
@@ -125,18 +120,14 @@ public class Game extends Canvas implements Runnable {
 
         Graphics g = bs.getDrawGraphics();
 
-        // Draw the background
         g.setColor(Color.CYAN);
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
-        // Draw a placeholder ground platform
         g.setColor(Color.GREEN);
         g.fillRect(0, HEIGHT - 50, WIDTH, 50);
 
-        // Render all game objects
         handler.render(g);
 
-        // Clean up graphics context and display buffer
         g.dispose();
         bs.show();
     }

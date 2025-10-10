@@ -1,14 +1,11 @@
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.util.LinkedList;
+
 import Math.Transform;
 import Math.Vector2;
-/**
- * GameObject.java
- *
- * The abstract base class for all entities in the game.
- * It holds fundamental properties like position, velocity, and identification.
- */
+
 public abstract class GameObject {
 
     protected Transform transform;
@@ -16,14 +13,12 @@ public abstract class GameObject {
     protected ID id;
 
 
-    protected float velX, velY;
-    protected float gravity = 0.5f;
-    protected final float MAX_VEL_Y = 10;
-    protected boolean falling = true;
-    protected boolean jumping = false;
+    protected LinkedList<GameObjectComponent> components = new LinkedList<>();
 
-    public GameObject(ID id) {
-        this.transform = new Transform(Vector2.zero(), Vector2.zero(), Vector2.one());
+    public GameObject(ID id, int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.transform = new Transform(Vector2.zero(), Vector2.zero(), new Vector2(width, height));
         this.id = id;
     }
 
@@ -31,20 +26,52 @@ public abstract class GameObject {
         gameObject.transform.setPosition(position);
         gameObject.transform.setRotation(rotation);
         gameObject.transform.setScale(scale);
+
+        gameObject.start();
+        Handler.objects.add(gameObject);
     }
 
-    /**
-     * Updates the object's state (position, AI, animation frame).
-     */
-    public abstract void tick();
+    public static void destroy(GameObject gameObject){
+        gameObject.end();
+        Handler.objects.remove(gameObject);
 
-    // The render method is now abstract in the base class (assuming you removed the default implementation)
-    public abstract void render(Graphics g);
+    }
 
-    public abstract Rectangle getBounds();
+    public void addComponent(GameObjectComponent component){
+        components.add(component);
+        component.start();
+    }
 
-    // Keeping x and y here is redundant with Transform, but keeping the setters/getters
-    // consistent with the old structure if other classes rely on them.
+    public <T extends GameObjectComponent> T getComponent(Class<T> componentType) {
+        for (GameObjectComponent component : components) {
+            if (componentType.isInstance(component)) {
+                return componentType.cast(component);
+            }
+        }
+        return null;
+    }
+
+    public void start(){
+
+    }
+
+    public void tick(){
+
+        for (GameObjectComponent component : components) {
+            component.tick();
+
+        }
+    }
+    public void end(){
+
+    }
+
+    public void render(Graphics g) {
+        g.setColor(Color.BLUE);
+        g.fillRect((int)transform.getPosition().x, (int)transform.getPosition().y, width, height);
+    }
+
+
     public int getX() { return (int)transform.getPosition().x; }
     public void setX(int x) { transform.getPosition().x = x; }
 
@@ -60,18 +87,7 @@ public abstract class GameObject {
     public ID getId() { return id; }
     public void setId(ID id) { this.id = id; }
 
-    public float getVelX() { return velX; }
-    public void setVelX(float velX) { this.velX = velX; }
+    public Transform getTransform() { return transform; }
 
-    public float getVelY() { return velY; }
-    public void setVelY(float velY) {
-        this.velY =  Math.min(velY, MAX_VEL_Y);
-    }
-
-    public boolean isFalling() { return falling; }
-    public void setFalling(boolean falling) { this.falling = falling; }
-
-    public boolean isJumping() { return jumping; }
-    public void setJumping(boolean jumping) { this.jumping = jumping; }
 
 }

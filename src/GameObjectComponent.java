@@ -1,5 +1,9 @@
-public abstract class GameObjectComponent {
 
-    public abstract void tick();
+
+public interface GameObjectComponent {
+
+    public void start();
+    public void tick();
+    public void end();
 
 }
