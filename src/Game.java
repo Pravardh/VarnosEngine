@@ -32,14 +32,6 @@ public class Game extends Canvas implements Runnable {
         // Create the window (Frame)
         new Window(WIDTH, HEIGHT, TITLE, this);
 
-        // --- Instantiate initial game objects ---
-        // Player (x, y, w, h, ID, handler)
-
-        // Enemy (x, y, w, h, ID, handler)
-
-        // Note: We need 'Block' objects for proper platformer collision.
-        // For simplicity, this example uses a temporary ground check in Player/Enemy.
-        // You would add Block objects here later.
     }
 
     // --- Game Loop Management ---
@@ -49,7 +41,9 @@ public class Game extends Canvas implements Runnable {
         thread.start();
         running = true;
 
-        GameObject.spawn(new Player(ID.Player, 32, 64), new Vector2(50, 50), Vector2.zero(), new Vector2(32, 64));
+        GameObject.spawn(new Player(ID.Player, 32, 64, "Player"), new Vector2(50, 50), Vector2.zero(), new Vector2(32, 64));
+        GameObject.spawn(new Enemy(ID.Enemy, 32, 64, "Enemy"), new Vector2(400, 480), Vector2.zero(), new Vector2(32, 64));
+
     }
 
     public synchronized void stop() {

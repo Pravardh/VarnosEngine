@@ -10,14 +10,17 @@ public abstract class GameObject {
     protected int width, height;
     protected ID id;
 
+    public String name;
+
 
     protected LinkedList<GameObjectComponent> components = new LinkedList<>();
 
-    public GameObject(ID id, int width, int height) {
+    public GameObject(ID id, int width, int height, String name) {
         this.width = width;
         this.height = height;
         this.transform = new Transform(Vector2.zero(), Vector2.zero(), new Vector2(width, height));
         this.id = id;
+        this.name = name;
     }
 
     public static void spawn(GameObject gameObject, Vector2 position, Vector2 rotation, Vector2 scale){

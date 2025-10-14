@@ -5,8 +5,9 @@ import java.awt.event.KeyEvent;
 
 public class PlayerMovementComponent implements GameObjectComponent {
 
-    private GameObject parent;
+    private final GameObject parent;
     private Transform transform;
+    public boolean isColliding = false;
 
     public float velX = 0, velY = 0;
     public float gravity = 0.1f;
@@ -33,13 +34,13 @@ public class PlayerMovementComponent implements GameObjectComponent {
 
     @Override
     public void tick() {
-        System.out.println("MovementComponent tick");
 
         int pressedKey = InputReader.getLastKeyPressed();
         int releasedKey = InputReader.getLastKeyReleased();
 
-        if (pressedKey == KeyEvent.VK_D || pressedKey == KeyEvent.VK_RIGHT)
+        if ((pressedKey == KeyEvent.VK_D || pressedKey == KeyEvent.VK_RIGHT) && !isColliding){
             velX = 5;
+        }
         if (pressedKey == KeyEvent.VK_A || pressedKey == KeyEvent.VK_LEFT)
             velX = -5;
 
@@ -82,6 +83,8 @@ public class PlayerMovementComponent implements GameObjectComponent {
         if (position.x + parent.height > Game.WIDTH) position.x = Game.WIDTH - parent.height;
 
         transform.setPosition(position);
+
+        System.out.println("Position: " + position.x + ", " + position.y);
     }
 
     @Override

@@ -6,10 +6,11 @@ import Math.Vector2;
 
 public class Player extends GameObject {
 
-    public Player(ID id, int width, int height) {
-        super(id, width, height);
+    public Player(ID id, int width, int height, String name) {
+        super(id, width, height, name);
 
         this.addComponent(new PlayerMovementComponent(this, 0.5f, 10f));
+        this.addComponent(new CollisionComponent(this));
     }
     @Override
     public void start() {
@@ -17,6 +18,10 @@ public class Player extends GameObject {
 
     }
 
+    @Override
+    public void tick() {
+        super.tick();
+    }
 
     @Override
     public void end(){
