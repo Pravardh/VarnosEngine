@@ -1,16 +1,16 @@
-
 import Math.*;
-
 import java.awt.event.KeyEvent;
 
 public class PlayerMovementComponent implements GameObjectComponent {
 
     private final GameObject parent;
     private Transform transform;
-    public boolean isColliding = false;
+
 
     public float velX = 0, velY = 0;
-    public float gravity = 0.1f;
+    public float speed = 5.0f;
+    public float jumpForce = 10.0f;
+    public float gravity = 0.5f;
     public float max_vel_y = 10;
 
     public boolean falling = true;
@@ -24,11 +24,9 @@ public class PlayerMovementComponent implements GameObjectComponent {
 
     @Override
     public void start() {
-
         if(parent != null){
             transform = parent.getTransform();
         }
-
         System.out.println("MovementComponent started");
     }
 
@@ -38,27 +36,28 @@ public class PlayerMovementComponent implements GameObjectComponent {
         int pressedKey = InputReader.getLastKeyPressed();
         int releasedKey = InputReader.getLastKeyReleased();
 
-        if ((pressedKey == KeyEvent.VK_D || pressedKey == KeyEvent.VK_RIGHT) && !isColliding){
-            velX = 5;
+        if (pressedKey == KeyEvent.VK_D || pressedKey == KeyEvent.VK_RIGHT){
+            velX = speed;
         }
-        if (pressedKey == KeyEvent.VK_A || pressedKey == KeyEvent.VK_LEFT)
-            velX = -5;
+        else if (pressedKey == KeyEvent.VK_A || pressedKey == KeyEvent.VK_LEFT){
+            velX = -speed;
+        }
 
-        if ((pressedKey == KeyEvent.VK_SPACE || pressedKey == KeyEvent.VK_W) && !jumping)
+
+        if ((pressedKey == KeyEvent.VK_SPACE || pressedKey == KeyEvent.VK_W) && !falling)
         {
-            GameObject.destroy(parent);
-            velY = -10; // Initial upward velocity
+            velY = -jumpForce;
+            jumping = true;
+            falling = true;
         }
 
-        if (releasedKey == KeyEvent.VK_D || releasedKey == KeyEvent.VK_RIGHT)
-            velX = 0;
-        if (releasedKey == KeyEvent.VK_A || releasedKey == KeyEvent.VK_LEFT)
-            velX = 0;
 
-        Vector2 position = transform.getPosition();
+        if ((releasedKey == KeyEvent.VK_D || releasedKey == KeyEvent.VK_RIGHT) ||
+                (releasedKey == KeyEvent.VK_A || releasedKey == KeyEvent.VK_LEFT))
+        {
+            velX = 0;
+        }
 
-        position.x += velX;
-        position.y += velY;
 
         if (falling) {
             velY += gravity;
@@ -67,20 +66,13 @@ public class PlayerMovementComponent implements GameObjectComponent {
             }
         }
 
-        float groundY = Game.HEIGHT - 50;
+        Vector2 position = transform.getPosition();
 
-        if (position.y + parent.height >= groundY) {
-            position.y = groundY - parent.height;
-            velY = 0;
-            falling = false;
-            jumping = false;
-        } else {
-            falling = true;
-        }
+        position.x += velX;
+        position.y += velY;
 
-        // Boundary checks (Horizontal)
         if (position.x < 0) position.x = 0;
-        if (position.x + parent.height > Game.WIDTH) position.x = Game.WIDTH - parent.height;
+        if (position.x + parent.width > Game.WIDTH) position.x = Game.WIDTH - parent.width;
 
         transform.setPosition(position);
 
@@ -89,6 +81,5 @@ public class PlayerMovementComponent implements GameObjectComponent {
 
     @Override
     public void end() {
-
     }
 }

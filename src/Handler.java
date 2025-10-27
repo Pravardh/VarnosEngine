@@ -22,19 +22,11 @@ public class Handler {
                     if(compB != null){
                         if(compA.getBounds().intersects(compB.getBounds())){
 
-                            player = compA.gameObject.getComponent(PlayerMovementComponent.class);
-                            if(player != null){
-                                player.isColliding = true;
-                                player.velX = 0;
-                            }
-                            System.out.println("Collision with " + compA.gameObject.name + " and " + compB.gameObject.name);
-                        }else{
-                            if(player != null){
-                                player.isColliding = false;
-                                player = null;
-                            }
-                        }
+                            resolveCollision(compA.gameObject, compB.gameObject);
 
+                        } else {
+
+                        }
                     }
                 }
 
@@ -46,6 +38,55 @@ public class Handler {
         }
 
         objectsToDestroy.clear();
+    }
+    private void resolveCollision(GameObject objA, GameObject objB) {
+        CollisionComponent compA = objA.getComponent(CollisionComponent.class);
+        CollisionComponent compB = objB.getComponent(CollisionComponent.class);
+
+        if (compA == null || compB == null) return;
+
+        java.awt.Rectangle rectA = compA.getBounds();
+        java.awt.Rectangle rectB = compB.getBounds();
+
+        float centerDistX = (float) Math.abs(rectA.getCenterX() - rectB.getCenterX());
+        float centerDistY = (float) Math.abs(rectA.getCenterY() - rectB.getCenterY());
+
+        float halfWidths = (float) (rectA.getWidth() / 2 + rectB.getWidth() / 2);
+        float halfHeights = (float) (rectA.getHeight() / 2 + rectB.getHeight() / 2);
+
+        float overlapX = halfWidths - centerDistX;
+        float overlapY = halfHeights - centerDistY;
+
+        if (overlapX < overlapY) {
+            float sign = (rectA.getCenterX() < rectB.getCenterX()) ? -1 : 1;
+            float mtvX = overlapX * sign;
+
+            objA.getTransform().getPosition().x += mtvX;
+
+            PlayerMovementComponent playerA = objA.getComponent(PlayerMovementComponent.class);
+            if (playerA != null) {
+                playerA.velX = 0;
+
+            }
+
+        } else {
+            float sign = (rectA.getCenterY() < rectB.getCenterY()) ? -1 : 1;
+            float mtvY = overlapY * sign;
+
+            objA.getTransform().getPosition().y += mtvY;
+
+            PlayerMovementComponent playerA = objA.getComponent(PlayerMovementComponent.class);
+            if (playerA != null) {
+                playerA.velY = 0;
+
+                if (sign < 0) {
+                    playerA.falling = false;
+                    playerA.jumping = false;
+                } else { /
+                    playerA.velY = 0;
+                }
+            }
+        }
     }
 
     public void render(Graphics g){

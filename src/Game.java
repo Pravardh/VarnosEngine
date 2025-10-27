@@ -13,28 +13,22 @@ import Math.*;
  */
 public class Game extends Canvas implements Runnable {
 
-    // Engine Constants
     public static final int WIDTH = 800;
     public static final int HEIGHT = WIDTH / 12 * 9; // Standard 4:3 aspect ratio
-    private static final String TITLE = "Varnos";
+    private static final String TITLE = "Varnos Engine";
 
     private Thread thread;
     private boolean running = false;
-    private Handler handler; // The object manager
-
+    private Handler handler;
     public Game() {
-        // Initialize the entity manager
         handler = new Handler();
 
-        // Add input listeners
         this.addKeyListener(new InputReader(handler));
 
-        // Create the window (Frame)
         new Window(WIDTH, HEIGHT, TITLE, this);
 
     }
 
-    // --- Game Loop Management ---
 
     public synchronized void start() {
         thread = new Thread(this);
@@ -43,29 +37,29 @@ public class Game extends Canvas implements Runnable {
 
         GameObject.spawn(new Player(ID.Player, 32, 64, "Player"), new Vector2(50, 50), Vector2.zero(), new Vector2(32, 64));
         GameObject.spawn(new Enemy(ID.Enemy, 32, 64, "Enemy"), new Vector2(400, 480), Vector2.zero(), new Vector2(32, 64));
+        int groundHeight = 50;
+        int groundY = HEIGHT - groundHeight;
+
+        GameObject.spawn(new Block(WIDTH, groundHeight, "Ground"), new Vector2(0, groundY), Vector2.zero(), new Vector2(WIDTH, groundHeight));
 
     }
 
     public synchronized void stop() {
         try {
-            thread.join(); // Waits for the thread to die
+            thread.join();
             running = false;
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * The main game loop (derived from the classic 'run' method in Java).
-     * This implements a fixed-time step or variable-time step loop.
-     */
+
     @Override
     public void run() {
-        // Request focus so key input is registered immediately
         this.requestFocus();
 
         long lastTime = System.nanoTime();
-        double amountOfTicks = 60.0; // Target ticks per second (logic updates)
+        double amountOfTicks = 60.0;
         double ns = 1000000000 / amountOfTicks;
         double delta = 0;
         long timer = System.currentTimeMillis();
@@ -77,13 +71,11 @@ public class Game extends Canvas implements Runnable {
             lastTime = now;
 
             while (delta >= 1) {
-                // Ticking/Logic updates (60 times per second)
                 tick();
                 delta--;
             }
 
             if (running) {
-                // Rendering updates (as fast as possible)
                 render();
             }
 
@@ -107,7 +99,6 @@ public class Game extends Canvas implements Runnable {
     private void render() {
         BufferStrategy bs = this.getBufferStrategy();
         if (bs == null) {
-            // Create 3 buffers (standard for smooth rendering)
             this.createBufferStrategy(3);
             return;
         }
@@ -116,9 +107,6 @@ public class Game extends Canvas implements Runnable {
 
         g.setColor(Color.CYAN);
         g.fillRect(0, 0, WIDTH, HEIGHT);
-
-        g.setColor(Color.GREEN);
-        g.fillRect(0, HEIGHT - 50, WIDTH, 50);
 
         handler.render(g);
 
