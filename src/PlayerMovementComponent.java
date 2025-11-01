@@ -30,10 +30,6 @@ public class PlayerMovementComponent implements GameObjectComponent {
             System.out.println("MovementComponent started");
 
             collisionComponent = parent.getComponent(CollisionComponent.class);
-            if(collisionComponent == null){
-                collisionComponent = new CollisionComponent(parent);
-                parent.addComponent(collisionComponent);
-            }
         }
 
     }
@@ -43,7 +39,6 @@ public class PlayerMovementComponent implements GameObjectComponent {
 
         int pressedKey = InputReader.getLastKeyPressed();
         int releasedKey = InputReader.getLastKeyReleased();
-        System.out.println(collisionComponent.isOnGround());
         if (pressedKey == KeyEvent.VK_D || pressedKey == KeyEvent.VK_RIGHT){
             velX = speed;
         }
@@ -70,13 +65,14 @@ public class PlayerMovementComponent implements GameObjectComponent {
             falling = false;
             jumping = false;
 
+            System.out.println("Is grounded");
             if(velY > 0){
                 velY = 0;
             }
         }  else {
+
             falling = true;
         }
-
         if(collisionComponent.isAtCieling() && velY < 0){
             velY = 0;
         }

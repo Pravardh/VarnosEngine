@@ -13,7 +13,7 @@ public class CollisionComponent implements GameObjectComponent {
     private boolean atCieling = false;
     private boolean atWall = false;
     private List<GameObject> colliders = new LinkedList<>();
-    private boolean shouldDebug = false;
+    private boolean shouldDebug;
 
     public CollisionComponent(GameObject gameObject){
         this.gameObject = gameObject;
@@ -43,11 +43,7 @@ public class CollisionComponent implements GameObjectComponent {
 
     public void registerCollision(GameObject other, Vector2 mtv){
         colliders.add(other);
-        if(shouldDebug){
-            System.out.println("alo");
 
-            System.out.println(mtv.y);
-        }
         if(mtv.y < 0){
             onGround = true;
         }if(mtv.y > 0){
@@ -56,7 +52,19 @@ public class CollisionComponent implements GameObjectComponent {
         if(mtv.x != 0){
             atWall = true;
         }
+
+        if(mtv.y == 0 && mtv.x == 0){
+            onGround = false;
+            atCieling = false;
+            atWall = false;
+        }
+        if(shouldDebug){
+            System.out.println("On Ground: " + onGround);
+        }
+
+
     }
+
     public boolean isOnGround(){
         return onGround;
     }

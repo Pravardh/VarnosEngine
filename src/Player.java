@@ -9,8 +9,8 @@ public class Player extends GameObject {
     public Player(ID id, int width, int height, String name) {
         super(id, width, height, name);
 
-        this.addComponent(new PlayerMovementComponent(this, 0.5f, 10f));
         this.addComponent(new CollisionComponent(this, true));
+        this.addComponent(new PlayerMovementComponent(this, 0.5f, 10f));
     }
     @Override
     public void start() {

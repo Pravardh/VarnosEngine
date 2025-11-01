@@ -3,13 +3,12 @@ public class Enemy extends GameObject{
     public Enemy(ID id, int width, int height, String name) {
         super(id, width, height, name);
         this.id = ID.Enemy;
-        this.addComponent(new CollisionComponent(this));
+        this.addComponent(new CollisionComponent(this, false));
 
     }
 
     @Override
     public void start(){
-        System.out.println("Player started");
 
 
     }

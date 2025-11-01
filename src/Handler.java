@@ -18,11 +18,9 @@ public class Handler {
         }
 
         for (GameObject temp : objects) {
-            temp.tick();
+                CollisionComponent compA = temp.getComponent(CollisionComponent.class);
 
-            CollisionComponent compA = temp.getComponent(CollisionComponent.class);
-
-            if(compA != null){
+                if(compA != null){
                 for(int j = objects.indexOf(temp) + 1; j < objects.size(); j++){
                     GameObject obj = objects.get(j);
                     CollisionComponent compB = obj.getComponent(CollisionComponent.class);
@@ -36,7 +34,11 @@ public class Handler {
                 }
 
             }
+            temp.tick();
+
         }
+
+
 
         for (GameObject temp : objectsToDestroy) {
             objects.remove(temp);
@@ -50,7 +52,7 @@ public class Handler {
 
         GameObject objA = compA.gameObject;
         GameObject objB = compB.gameObject;
-
+        //System.out.println("Obj A: " + objA.name +  " Obj B: "  + objB.name);
         java.awt.Rectangle rectA = compA.getBounds();
         java.awt.Rectangle rectB = compB.getBounds();
 
