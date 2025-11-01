@@ -10,7 +10,7 @@ public class Player extends GameObject {
         super(id, width, height, name);
 
         this.addComponent(new PlayerMovementComponent(this, 0.5f, 10f));
-        this.addComponent(new CollisionComponent(this));
+        this.addComponent(new CollisionComponent(this, true));
     }
     @Override
     public void start() {

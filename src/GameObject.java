@@ -24,6 +24,7 @@ public abstract class GameObject {
     }
 
     public static void spawn(GameObject gameObject, Vector2 position, Vector2 rotation, Vector2 scale){
+
         gameObject.transform.setPosition(position);
         gameObject.transform.setRotation(rotation);
         gameObject.transform.setScale(scale);

@@ -35,7 +35,7 @@ public class Game extends Canvas implements Runnable {
         thread.start();
         running = true;
 
-        GameObject.spawn(new Player(ID.Player, 32, 64, "Player"), new Vector2(50, 50), Vector2.zero(), new Vector2(32, 64));
+        GameObject.spawn(new Player(ID.Player, 32, 64, "Player"), new Vector2(400, 50), Vector2.zero(), new Vector2(32, 64));
         GameObject.spawn(new Enemy(ID.Enemy, 32, 64, "Enemy"), new Vector2(400, 480), Vector2.zero(), new Vector2(32, 64));
         int groundHeight = 50;
         int groundY = HEIGHT - groundHeight;

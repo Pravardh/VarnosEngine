@@ -6,6 +6,7 @@ public class PlayerMovementComponent implements GameObjectComponent {
     private final GameObject parent;
     private Transform transform;
 
+    private CollisionComponent collisionComponent;
 
     public float velX = 0, velY = 0;
     public float speed = 5.0f;
@@ -26,8 +27,15 @@ public class PlayerMovementComponent implements GameObjectComponent {
     public void start() {
         if(parent != null){
             transform = parent.getTransform();
+            System.out.println("MovementComponent started");
+
+            collisionComponent = parent.getComponent(CollisionComponent.class);
+            if(collisionComponent == null){
+                collisionComponent = new CollisionComponent(parent);
+                parent.addComponent(collisionComponent);
+            }
         }
-        System.out.println("MovementComponent started");
+
     }
 
     @Override
@@ -35,7 +43,7 @@ public class PlayerMovementComponent implements GameObjectComponent {
 
         int pressedKey = InputReader.getLastKeyPressed();
         int releasedKey = InputReader.getLastKeyReleased();
-
+        System.out.println(collisionComponent.isOnGround());
         if (pressedKey == KeyEvent.VK_D || pressedKey == KeyEvent.VK_RIGHT){
             velX = speed;
         }
@@ -43,9 +51,9 @@ public class PlayerMovementComponent implements GameObjectComponent {
             velX = -speed;
         }
 
-
-        if ((pressedKey == KeyEvent.VK_SPACE || pressedKey == KeyEvent.VK_W) && !falling)
+        if ((pressedKey == KeyEvent.VK_SPACE || pressedKey == KeyEvent.VK_W) && collisionComponent.isOnGround())
         {
+
             velY = -jumpForce;
             jumping = true;
             falling = true;
@@ -58,16 +66,29 @@ public class PlayerMovementComponent implements GameObjectComponent {
             velX = 0;
         }
 
+        if(collisionComponent.isOnGround()){
+            falling = false;
+            jumping = false;
 
-        if (falling) {
+            if(velY > 0){
+                velY = 0;
+            }
+        }  else {
+            falling = true;
+        }
+
+        if(collisionComponent.isAtCieling() && velY < 0){
+            velY = 0;
+        }
+
+        if(falling){
             velY += gravity;
-            if (velY > max_vel_y) {
+            if(velY > max_vel_y){
                 velY = max_vel_y;
             }
         }
 
         Vector2 position = transform.getPosition();
-
         position.x += velX;
         position.y += velY;
 
@@ -76,7 +97,6 @@ public class PlayerMovementComponent implements GameObjectComponent {
 
         transform.setPosition(position);
 
-        System.out.println("Position: " + position.x + ", " + position.y);
     }
 
     @Override

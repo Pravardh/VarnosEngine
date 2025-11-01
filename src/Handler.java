@@ -1,6 +1,6 @@
 import java.awt.Graphics;
 import java.util.LinkedList;
-
+import Math.*;
 public class Handler {
 
     public static final LinkedList<GameObject> objects = new LinkedList<>();
@@ -9,6 +9,14 @@ public class Handler {
     private PlayerMovementComponent player;
 
     public void tick(){
+
+        for(GameObject temp : objects){
+            CollisionComponent comp = temp.getComponent(CollisionComponent.class);
+            if(comp != null){
+                comp.clearCollisionState();
+            }
+        }
+
         for (GameObject temp : objects) {
             temp.tick();
 
@@ -22,11 +30,8 @@ public class Handler {
                     if(compB != null){
                         if(compA.getBounds().intersects(compB.getBounds())){
 
-                            resolveCollision(compA.gameObject, compB.gameObject);
-
-                        } else {
-
-                        }
+                            resolveCollision(compA, compB);
+                        } 
                     }
                 }
 
@@ -39,11 +44,12 @@ public class Handler {
 
         objectsToDestroy.clear();
     }
-    private void resolveCollision(GameObject objA, GameObject objB) {
-        CollisionComponent compA = objA.getComponent(CollisionComponent.class);
-        CollisionComponent compB = objB.getComponent(CollisionComponent.class);
+    private void resolveCollision(CollisionComponent compA, CollisionComponent compB) {
 
         if (compA == null || compB == null) return;
+
+        GameObject objA = compA.gameObject;
+        GameObject objB = compB.gameObject;
 
         java.awt.Rectangle rectA = compA.getBounds();
         java.awt.Rectangle rectB = compB.getBounds();
@@ -57,36 +63,25 @@ public class Handler {
         float overlapX = halfWidths - centerDistX;
         float overlapY = halfHeights - centerDistY;
 
+        Vector2 mtv = new Vector2(0, 0);
+
         if (overlapX < overlapY) {
             float sign = (rectA.getCenterX() < rectB.getCenterX()) ? -1 : 1;
-            float mtvX = overlapX * sign;
-
-            objA.getTransform().getPosition().x += mtvX;
-
-            PlayerMovementComponent playerA = objA.getComponent(PlayerMovementComponent.class);
-            if (playerA != null) {
-                playerA.velX = 0;
-
-            }
+            mtv.x = overlapX * sign;
 
         } else {
             float sign = (rectA.getCenterY() < rectB.getCenterY()) ? -1 : 1;
-            float mtvY = overlapY * sign;
-
-            objA.getTransform().getPosition().y += mtvY;
-
-            PlayerMovementComponent playerA = objA.getComponent(PlayerMovementComponent.class);
-            if (playerA != null) {
-                playerA.velY = 0;
-
-                if (sign < 0) {
-                    playerA.falling = false;
-                    playerA.jumping = false;
-                } else { /
-                    playerA.velY = 0;
-                }
-            }
+            mtv.y = overlapY * sign;
         }
+
+        objA.getTransform().getPosition().x += mtv.x;
+        objA.getTransform().getPosition().y += mtv.y;
+
+        compA.registerCollision(objB, mtv);
+
+        Vector2 invertedMtv = new Vector2(-mtv.x, -mtv.y);
+
+        compB.registerCollision(objA, invertedMtv);
     }
 
     public void render(Graphics g){
