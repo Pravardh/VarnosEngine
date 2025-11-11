@@ -65,7 +65,6 @@ public class PlayerMovementComponent implements GameObjectComponent {
             falling = false;
             jumping = false;
 
-            System.out.println("Is grounded");
             if(velY > 0){
                 velY = 0;
             }

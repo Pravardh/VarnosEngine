@@ -76,15 +76,30 @@ public class Handler {
             mtv.y = overlapY * sign;
         }
 
-        objA.getTransform().getPosition().x += mtv.x;
-        objA.getTransform().getPosition().y += mtv.y;
+        if(!compB.canOverlap()){
+            objA.getTransform().getPosition().x += mtv.x;
+            objA.getTransform().getPosition().y += mtv.y;
 
-        compA.registerCollision(objB, mtv);
+        }
+
+        if(compA.canOverlap()){
+            compA.registerOverlap(objB, mtv);
+        }
+        else{
+            compA.registerCollision(objB, mtv);
+
+        }
 
         Vector2 invertedMtv = new Vector2(-mtv.x, -mtv.y);
 
-        compB.registerCollision(objA, invertedMtv);
-    }
+
+        if(compB.canOverlap()){
+            compB.registerOverlap(objA, mtv);
+        }
+        else{
+            compB.registerCollision(objA, mtv);
+
+        }    }
 
     public void render(Graphics g){
 

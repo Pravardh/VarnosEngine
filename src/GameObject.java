@@ -1,6 +1,6 @@
 import java.awt.Graphics;
 import java.awt.Color;
-import java.util.LinkedList;
+import java.util.*;
 
 import Math.*;
 
@@ -9,13 +9,13 @@ public abstract class GameObject {
     protected Transform transform;
     protected int width, height;
     protected ID id;
-
     public String name;
-
+    public static List<GameObject> allObjects = new ArrayList<>();
 
     protected LinkedList<GameObjectComponent> components = new LinkedList<>();
 
     public GameObject(ID id, int width, int height, String name) {
+        allObjects.add(this);
         this.width = width;
         this.height = height;
         this.transform = new Transform(Vector2.zero(), Vector2.zero(), new Vector2(width, height));
@@ -40,15 +40,25 @@ public abstract class GameObject {
 
     }
 
-    public void addComponent(GameObjectComponent component){
+    public GameObjectComponent addComponent(GameObjectComponent component){
         components.add(component);
         component.start();
+        return component;
     }
 
     public <T extends GameObjectComponent> T getComponent(Class<T> componentType) {
         for (GameObjectComponent component : components) {
             if (componentType.isInstance(component)) {
                 return componentType.cast(component);
+            }
+        }
+        return null;
+    }
+
+    public static Player getPlayer(){
+        for(GameObject gameObject : allObjects){
+            if(gameObject.getClass() == Player.class){
+                return (Player) gameObject;
             }
         }
         return null;

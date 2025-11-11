@@ -7,7 +7,7 @@ public class Block extends GameObject {
     public Block(int width, int height, String name) {
         super(ID.Block, width, height, name);
 
-        this.addComponent(new CollisionComponent(this));
+        this.addComponent(new CollisionComponent(this, false, false));
     }
 
     @Override
