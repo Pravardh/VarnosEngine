@@ -40,9 +40,17 @@ public class Game extends Canvas implements Runnable {
         GameObject.spawn(new CoinItem(ID.Pickup, 20, 20, "Coin pickup"), new Vector2(480, 480), Vector2.zero(), new Vector2(20, 20));
         GameObject.spawn(new CoinItem(ID.Pickup, 20, 20, "Coin pickup"), new Vector2(350, 480), Vector2.zero(), new Vector2(20, 20));
 
+        Vector2 platformVel = new Vector2(2.0f, 0f);
+        float range = 200f;
+
         int groundHeight = 50;
         int groundY = HEIGHT - groundHeight;
-
+        GameObject.spawn(
+                new MovingPlatform(100, 20, "MovingPlatform", platformVel, range),
+                new Vector2(200, groundY - 20),
+                Vector2.zero(),
+                new Vector2(100, 20)
+        );
         GameObject.spawn(new Block(WIDTH, groundHeight, "Ground"), new Vector2(0, groundY), Vector2.zero(), new Vector2(WIDTH, groundHeight));
 
     }

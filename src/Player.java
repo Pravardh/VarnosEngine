@@ -1,8 +1,4 @@
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import Math.Transform;
-import Math.Vector2;
+
 
 public class Player extends GameObject {
     private int score = 0;
@@ -18,13 +14,25 @@ public class Player extends GameObject {
 
     }
 
-    @Override
     public void tick() {
+        CollisionComponent collision = getComponent(CollisionComponent.class);
+
+        if (collision != null && collision.isOnGround()) {
+            GameObject floor = collision.getGroundObject();
+            if (floor instanceof MovingPlatform) {
+                MovingPlatform platform = (MovingPlatform) floor;
+
+                this.transform.getPosition().x += platform.getVelocity().x;
+                this.transform.getPosition().y += platform.getVelocity().y;
+            }
+
+            this.transform.getPosition().y += 1;
+        }
+
         super.tick();
 
-        System.out.println("Collected coins: " + score);
+        // System.out.println("Collected coins: " + score);
     }
-
     @Override
     public void end(){
         System.out.println("Player ended");
